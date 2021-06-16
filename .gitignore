@@ -9,7 +9,7 @@
 
 *.rpt
 *.bak
-# .qpf is the Quartus II project 
-*.qpf  
-*.qsf
+# .qpf is the Quartus II project, .qsf is generated along
+# *.qpf  
+# *.qsf
 *.qws
