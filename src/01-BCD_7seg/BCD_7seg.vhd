@@ -12,10 +12,10 @@ end entity;
 ------------------------------------------------------------------------
 
 architecture a_BCD_7seg of BCD_7seg is
-
+	signal neg_hex : std_logic_vector(6 downto 0);
 begin
     -- abcdefg
-    hex <= "1111110" when dado_in = "0000" else
+    neg_hex <= "1111110" when dado_in = "0000" else
         "0110000" when dado_in = "0001" else
         "1101101" when dado_in = "0010" else
         "1111001" when dado_in = "0011" else
@@ -26,5 +26,6 @@ begin
         "1111111" when dado_in = "1000" else
         "1111011" when dado_in = "1001" else
         "0000000";
-
+	-- Board 0 is on, 1 is off
+	hex <= not neg_hex;
 end architecture;
