@@ -76,10 +76,10 @@ begin
 
     GND <= '0';
 
-    EN_CS <= EN_GLOBAL;
+    EN_CS <= EN_GLOBAL and (not EN_UN) and (not EN_DZ);
     CLR_CS <= '1' when centesimo = "1001" else '0';
 
-    EN_DS <= CLR_CS and EN_GLOBAL; 
+    EN_DS <= CLR_CS and EN_GLOBAL and (not EN_DZ); 
     CLR_DS <= '1' when decimo = "1001" else '0';
 
     EN_UN <= CLR_DS and EN_GLOBAL;
