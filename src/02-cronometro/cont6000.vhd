@@ -88,7 +88,7 @@ begin
     EN_DZ <= CLR_UN and EN_GLOBAL; 
     CLR_DZ <= '1' when dezena = "1001" else '0';
 
-    -- Conta atÃ© 6000
+    -- Conta ate 6000
     EN_GLOBAL <= '0' when dezena = "0110" else 
                  EN;
 

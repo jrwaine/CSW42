@@ -7,7 +7,7 @@ end entity;
 
 architecture a_cont6000_7seg_tb of cont6000_7seg_tb is
 
-    signal CLK, ZERAR, INICIAR: std_logic;
+    signal CLK_CS, ZERAR, INICIAR: std_logic;
     signal hex_DS, hex_CS, hex_UN, hex_DZ: std_logic_vector(6 downto 0);
 
 component cont6000_7seg is
@@ -26,7 +26,7 @@ begin
     cron_60_7seg: cont6000_7seg
         port map(
             ZERAR => ZERAR,
-            CLK => CLK,
+            CLK => CLK_CS,
             INICIAR  => INICIAR,
             hex_DS  => hex_DS,
             hex_CS  => hex_CS,
@@ -34,10 +34,10 @@ begin
             hex_DZ  => hex_DZ);
 
     process begin -- clock
-        CLK <= '0';
-        wait for 5 ns;
-        CLK <= '1';
-        wait for 5 ns;
+        CLK_CS <= '0';
+        wait for 0.5 ns;
+        CLK_CS <= '1';
+        wait for 0.5 ns;
     end process;
 
     process begin -- Zerar

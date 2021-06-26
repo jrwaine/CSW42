@@ -17,8 +17,9 @@ entity cont6000_7seg is  -- Contador atÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â�
 architecture a_cont6000_7seg of cont6000_7seg is
 
     signal RST: std_logic := '1';
-    signal EN: std_logic := '0';
-    signal aux_EN: std_logic;
+    signal EN_INIT: std_logic;
+    signal EN_ZERAR: std_logic;
+    signal EN_CONT: std_logic := '0';
     signal DS, CS, UN, DZ: unsigned(3 downto 0);
     signal log_DS, log_CS, log_UN, log_DZ: std_logic_vector(3 downto 0);
     -- signal hex_DS, hex_CS, hex_UN, hex_DZ: std_logic_vector(6 downto 0);
@@ -33,6 +34,14 @@ component cont6000 is
             DZ:  out unsigned(3 downto 0));
 end component;
 
+component button30ms_cron is
+    PORT(
+            CLK_CS: in std_logic;
+            BUTTON:  in std_logic;
+            EN: out std_logic
+            );
+end component;
+
 component BCD_7seg is
     port(
         dado_in : in std_logic_vector(3 downto 0);
@@ -45,7 +54,7 @@ begin
         port map(
             RST => RST,
             CLK => CLK,
-            EN  => EN,
+            EN  => EN_CONT,
             CS  => CS,
             DS  => DS,
             UN  => UN,
@@ -72,32 +81,42 @@ begin
             hex     => hex_DZ
         );
 
+    btn_init: button30ms_cron
+        port map(
+            CLK_CS => CLK,
+            BUTTON => INICIAR,
+            EN => EN_INIT
+        );
+
+    btn_zerar: button30ms_cron
+        port map(
+            CLK_CS => CLK,
+            BUTTON => ZERAR,
+            EN => EN_ZERAR
+        );
+
     log_CS <= std_logic_vector(CS);
     log_DS <= std_logic_vector(DS);
     log_UN <= std_logic_vector(UN);
     log_DZ <= std_logic_vector(DZ);
 
-    process(INICIAR, CLK) -- Iniciar contagem
+    process (CLK)
+    -- Only update in clock cycle
     begin
-        if(rising_edge(INICIAR)) then
-            if aux_EN = '0' or aux_EN = '1' then
-                aux_EN <= (not aux_EN);
+        if CLK' event and CLK = '1' then
+            if EN_ZERAR = '1' and EN_CONT = '0' then
+                RST <= '1';
             else
-                aux_EN <= '1';
+                RST <= '0';
+            end if;
+            -- Conta até 6000
+            if log_DZ = "0110" then
+                EN_CONT <= '0';
+            elsif EN_INIT = '1' then
+                EN_CONT <= not EN_CONT;
             end if;
         end if;
     end process;
 
-    process(ZERAR, EN) -- Logica reset
-    begin
-       if ZERAR = '1' and EN = '0' then
-           RST <= '1';
-       else 
-           RST <= '0';
-       end if;
-    end process;
-
-
-    EN <= aux_EN when not (log_DZ = "0110") else '0'; 
 
 end architecture;
