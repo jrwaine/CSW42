@@ -37,7 +37,7 @@
 
 
 set_global_assignment -name FAMILY "Cyclone II"
-set_global_assignment -name DEVICE 1.2V
+set_global_assignment -name DEVICE Auto
 set_global_assignment -name TOP_LEVEL_ENTITY "03-sinais_variaveis"
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "13:13:02  JULY 02, 2021"
@@ -48,3 +48,4 @@ set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (VHDL)"
 set_global_assignment -name EDA_OUTPUT_DATA_FORMAT VHDL -section_id eda_simulation
+set_global_assignment -name VHDL_FILE cont_bits.vhd
