@@ -45,6 +45,7 @@ begin
     -- Only update in clock cycle
     begin
         if rising_edge(CLK) then
+            v_cont_bit_var := "00";
             for i in dado_in'range loop
                 if dado_in(i) = '1' then
                     v_cont_bit_var := v_cont_bit_var + 1;
