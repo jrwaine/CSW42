@@ -15,3 +15,7 @@ Entregar
 projeto no quartus 
 simulação Modelsim FUNCIONAL E GATE LEVEL com snapshots de formas de onda relevantes
 Evidências de execução na placa (fotos, vídeos)
+
+-------------------------------------
+
+Para rodar na placa, renomeie o arquivo .qsf do contador desejado para o mesmo nome do projeto
