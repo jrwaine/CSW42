@@ -1,3 +1,6 @@
+# Paste it inside simulation/modelsim 
+# Execute it using "do ./{this filename}" inside file folder
+
 vcom -reportprogress 300 -work work ./../../BCD_7seg.vhd
 vcom -reportprogress 300 -work work ./../../button30ms_cron.vhd
 vcom -reportprogress 300 -work work ./../../cont4_completo.vhd
@@ -11,8 +14,7 @@ vcom -reportprogress 300 -work work ./../../cont6000_7seg_tb.vhd
 vcom -reportprogress 300 -work work ./../../cont6000_7seg_tb.vhd
 vcom -reportprogress 300 -work work ./../../cont6000_7seg_tb.vhd
 
-vsim +altera -do cronometro_run_msim_gate_vhdl.do -l msim_transcript -gui gate_work.cont6000_7seg_tb
-do cronometro_run_msim_gate_vhdl.do
+vsim +altera -l msim_transcript -gui gate_work.cont6000_7seg_tb
 
 add wave -position insertpoint  \
 sim:/cont6000_7seg_tb/cron_60_7seg/CLK \
