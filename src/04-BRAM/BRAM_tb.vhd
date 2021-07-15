@@ -8,7 +8,7 @@ end entity;
 Architecture X of BRAM_tb is
 
 component BRAM is
-   PORT(RST       : in  std_logic;        
+    PORT(RST       : in  std_logic;        
         CLK       : in  std_logic;        
         READDATA  : out std_logic_vector(7 downto 0);
         WRITEDATA : in  std_logic_vector(7 downto 0);
@@ -16,7 +16,7 @@ component BRAM is
         RD_EN     : in std_logic;            
         CS        : in std_logic;           
         ADD       : in std_logic_vector (9 downto 0)
-          );
+        );
 end component;
 signal GND, VCC: std_logic; 
 signal rst, clk: std_logic;
@@ -54,24 +54,24 @@ end process;
 DUT:BRAM
     port map
        (RST       => rst      ,
-          CLK       => clk      ,
+        CLK       => clk      ,
         READDATA  => READDATA , 
         WRITEDATA => WRITEDATA, 
         WR_EN     => WR_EN    , 
         RD_EN     => RD_EN    , 
         CS        => CS       , 
         ADD       => ADD       
-          );
+        );
 
 gera_data_we_rd_add_cs : process (RST, CLK)
 begin
     If RST = '1' then
---	   READDATA   <= (others => '0');
---	   WRITEDATA  <= (others => '0');
---	   WR_EN      <= '0';
---	   RD_EN      <= '0'; 
---	   CS         <= '0';
---	   ADD        <= (others => '0');
+--     READDATA   <= (others => '0');
+--     WRITEDATA  <= (others => '0');
+--     WR_EN      <= '0';
+--     RD_EN      <= '0'; 
+--     CS         <= '0';
+--     ADD        <= (others => '0');
        counter    <= 0;		
        state      <= idle_st0;
     Elsif CLK' event and CLK = '1' then
