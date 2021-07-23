@@ -19,7 +19,7 @@ Architecture X of BRAM is
     -- RAM of 2^10 addresses with 2^8 bits each
     type mem is array(9 downto 0) of std_logic_vector(7 downto 0);
     signal ram_block: mem;
-    signal ADD_int: integer;
+    signal ADD_int: integer range 0 to 1023;
 Begin
     ADD_int <= to_integer(unsigned(ADD));
 

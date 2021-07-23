@@ -24,7 +24,7 @@ signal READDATA, WRITEDATA : std_logic_vector(7 downto 0);
 signal ADD : std_logic_vector(9 downto 0);
 TYPE state_type is (idle_st0,idle_st1, write_st0, write_st1, read_st0, read_st1);
 signal state : state_type; 
-signal INTERVAL_0, INTERVAL_1, counter, address : integer;
+signal INTERVAL_0, INTERVAL_1, counter, address : integer := 0;
 signal CS, WR_EN, RD_EN    : std_logic; 
 
 begin  
