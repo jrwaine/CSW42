@@ -17,58 +17,23 @@ component BRAM is
         CS        : in std_logic;           
         ADD       : in std_logic_vector (9 downto 0)
         );
-end component; 
+end component;
+signal GND, VCC: std_logic; 
 signal rst, clk: std_logic;
 signal READDATA, WRITEDATA : std_logic_vector(7 downto 0);
 signal ADD : std_logic_vector(9 downto 0);
 TYPE state_type is (idle_st0,idle_st1, write_st0, write_st1, read_st0, read_st1);
 signal state : state_type; 
-signal counter, address : integer := 0;
-signal INTERVAL_RD_WR : integer := 10;
+signal INTERVAL_0, INTERVAL_1, counter, address : integer := 0;
 signal CS, WR_EN, RD_EN    : std_logic; 
 
-signal plus : std_logic_vector(7 downto 0) := x"2b";
-signal minus : std_logic_vector(7 downto 0) := x"2d";
-signal space : std_logic_vector(7 downto 0) := x"20";
-
-type my_name_type is array(30 downto 0) of std_logic_vector(7 downto 0);
-signal my_name: my_name_type := (
-    0 => x"57", -- W
-    1 => x"61", -- a
-    2 => x"69", -- i
-    3 => x"6E", -- n
-    4 => x"65", -- e
-    5 => space, 
-    6 => x"4F", -- O
-    7 => x"6C", -- l
-    8 => x"69", -- i
-    9 => x"76", -- v
-    10 => x"65", -- e
-    11 => x"69", -- i
-    12 => x"72", -- r
-    13 => x"61", -- a
-    14 => space, 
-    15 => x"4A", -- J
-    16 => x"75", -- u
-    17 => x"6E", -- n
-    18 => x"69", -- i
-    19 => x"6F", -- o
-    20 => x"72", -- r
-    21 => space, 
-    22 => plus, 
-    23 => plus, 
-    24 => plus, 
-    25 => minus,
-    26 => minus, 
-    27 => plus, 
-    28 => plus, 
-    29 => plus, 
-    30 => space
-    );
-    signal counter_name : integer := 0;
-    signal name_size : integer := 31;
-
 begin  
+
+INTERVAL_0 <= 10;
+INTERVAL_1 <= 15;
+
+GND <= '0';
+VCC <= '1';
 
 gera_rst:process 
 begin 
@@ -101,48 +66,43 @@ DUT:BRAM
 gera_data_we_rd_add_cs : process (RST, CLK)
 begin
     If RST = '1' then
+--     READDATA   <= (others => '0');
+--     WRITEDATA  <= (others => '0');
+--     WR_EN      <= '0';
+--     RD_EN      <= '0'; 
+--     CS         <= '0';
+--     ADD        <= (others => '0');
+       counter    <= 0;		
        state      <= idle_st0;
     Elsif CLK' event and CLK = '1' then
         counter <= counter + 1;
         case state is
             when idle_st0 => 
-                if counter = INTERVAL_RD_WR then 
+                if counter = INTERVAL_0 then 
                     state <= write_st0;
                     counter <= 0;
-                end if;
+                end if;	
             when write_st0 => 
                 state <= write_st1;
+                counter <= 0;
             when write_st1 => 
-                if( counter_name = name_size - 1) then
-                    counter_name <= 0;
-                else
-                    counter_name <= counter_name + 1;
-                end if;
-                address  <= address + 1;
-                if(address >= 1024) then
-                    address <= 0;
-                    state <= idle_st1;
-                else
-                    state <= idle_st0;
-                end if;
-                counter <= 0;
-            when idle_st1 => 
-                state <= read_st0;
-                counter <= 0;
-            when read_st0 => 
-                state <= read_st1;
-                if counter = INTERVAL_RD_WR then 
-                    state <= read_st0;
-                    counter <= 0;
-                end if;
-            when read_st1 => 
-                address  <= address + 1;
-                if(address >= 1024) then
-                    address <= 0;
-                end if;
                 state <= idle_st1;
                 counter <= 0;
-        end case;
+            when idle_st1 => 
+                if counter = INTERVAL_1 then 
+                    state <= read_st0;
+                    counter <= 0;
+                end if;	
+            when read_st0 => 
+                state <= read_st1;
+                counter <= 0;
+            when read_st1 => 
+                --if counter = INTERVAL_1 then 
+                    state <= idle_st0;
+                    counter <= 0;
+                --end if;	
+                address  <= address + 1;
+        end case;    	
     end if;
 
 End process;
@@ -158,13 +118,13 @@ begin
                 CS         <= '0';
                 ADD        <= (others => '0');
             when write_st0 => 
-                WRITEDATA  <= my_name(counter_name);
+                WRITEDATA  <= x"55";
                 WR_EN      <= '1';
                 RD_EN      <= '0'; 
                 CS         <= '1';
                 ADD        <= std_logic_vector(to_unsigned(address, ADD'length));
             when write_st1 => 
-                WRITEDATA  <= my_name(counter_name);
+                WRITEDATA  <= x"55";
                 WR_EN      <= '0';
                 RD_EN      <= '0'; 
                 CS         <= '0';
