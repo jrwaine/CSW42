@@ -4,6 +4,7 @@ use IEEE.numeric_std.all;
 
 Entity LFSR is
     PORT(
+        clk: in std_logic;
         gen_number: in std_logic;
         seed: in std_logic_vector(31 downto 0);
         random_val: out std_logic_vector(31 downto 0));
@@ -13,13 +14,15 @@ Architecture a_LFSR of LFSR is
     signal feedback: std_logic;
     signal curr_number, next_number: std_logic_vector(31 downto 0);
 Begin
-    Process (gen_number)
+    Process (gen_number, clk)
     variable v_is_init : std_logic := '0';
     Begin
-        if(rising_edge(gen_number)) then
+        if(rising_edge(clk) and gen_number = '1')  then
             -- Set seed only once
             if(v_is_init = '0') then
-                curr_number <= seed;
+                curr_number <= (((seed(31) xor seed(21)) 
+                        xor seed(1)) 
+                    xor seed(0)) & seed(31 downto 1);
                 v_is_init := '1';
             else
                 curr_number <= next_number;
