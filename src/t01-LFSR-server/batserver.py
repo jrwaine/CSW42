@@ -1,9 +1,6 @@
-import argparse
-import sys
 import socket
 import tkinter
-from typing import Optional
-from typing_extensions import IntVar
+from typing import Optional, Tuple
 
 import numpy as np
 import seaborn as sns
@@ -12,28 +9,28 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 
-IP_SERVER = "localhost"
+HOST = "0.0.0.0" # local
 PORT_SERVER = 8008
-ONLY_TEST = False
+
 SEED_SET = False
 MAX_GEN_SIZE = 1024
 NUMBERS_RCV = np.empty((0,), dtype=np.uint32)
-N_MSB_CONSIDER = 4
 
-def send_msg_rcv_data(b: bytes, rcv_size: int) -> Optional[bytes]:
+def send_msg_rcv_data(s: socket.socket, b: bytes, rcv_size: int) -> Optional[bytes]:
     global BUFF_SIZE, IP_SERVER, PORT_SERVER
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((IP_SERVER, PORT_SERVER))
+    # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # s.connect((IP_SERVER, PORT_SERVER))
     s.send(b)
     data_ret: Optional[bytes] = None
     if(rcv_size > 0):
         data_ret = s.recv(rcv_size)
-    s.close()
+    # s.close()
     return data_ret
 
 def decode_msg(b: bytes) -> np.ndarray:
     np_arr = np.array(np.frombuffer(b, dtype=np.uint32))
+    print(b, np_arr)
     return np_arr
 
 
@@ -41,7 +38,7 @@ def plot_numbers_rcv():
     global NUMBERS_RCV
 
     data_plot = NUMBERS_RCV
-    print(len(data_plot))
+    print('string', len(data_plot))
     fig = Figure()
     ax = fig.subplots()
     sns.histplot(data_plot, ax=ax)
@@ -50,8 +47,18 @@ def plot_numbers_rcv():
     # fig.savefig(f"csr31/plots/{msg}_{side}.png")
     return fig
 
+def init_client_socket() -> Tuple[socket.socket, socket.socket]:
+    global HOST, PORT_SERVER
+    serversocket = socket.socket()
+    serversocket.bind((HOST, PORT_SERVER))
+    print(f"Waiting for connection at: {HOST}, {PORT_SERVER}")
+    serversocket.listen(1)
+    clientsocket, addr = serversocket.accept()
+    a = clientsocket.recv(12)
+    print("received", a)
+    return clientsocket, serversocket
 
-def crete_client_interface():
+def crete_client_interface(client_socket: socket.socket, server_socket: socket.socket):
     window = tkinter.Tk()
     window.title(f"Client")
     window.geometry("720x720")
@@ -67,7 +74,7 @@ def crete_client_interface():
     n_rand_field_res.grid(column=1, row=1)
 
     def send_socket_cmd(data_snd, rcv_data: bool) -> Optional[bytes]:
-        data_rcv = send_msg_rcv_data(data_snd, rcv_data)
+        data_rcv = send_msg_rcv_data(client_socket, data_snd, rcv_data)
         return data_rcv
 
     def send_seed():
@@ -90,8 +97,9 @@ def crete_client_interface():
 
     def update_plot_arr(data_rcv: bytes):
         global NUMBERS_RCV
-        print(len(data_rcv))
+        print("string2", len(data_rcv))
         arr_rcv = np.frombuffer(data_rcv, dtype=np.uint32)
+        print(arr_rcv, data_rcv)
         NUMBERS_RCV = np.append(NUMBERS_RCV, arr_rcv, axis=0)
         figure = plot_numbers_rcv()
         canvas = FigureCanvasTkAgg(figure, window)
@@ -107,8 +115,9 @@ def crete_client_interface():
 
 
 def run_client():
+    client_socket, server_socket = init_client_socket()
     print("running client")
-    crete_client_interface()
+    crete_client_interface(client_socket, server_socket)
 
 def main():
     run_client()
