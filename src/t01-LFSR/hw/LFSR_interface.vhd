@@ -43,7 +43,7 @@ Begin
         seed => seed,
         random_val => random_number);
 
-    s_read_data <= random_number when addr = "10" and rd_en = '1' else (others => '0');
+    s_read_data <= random_number when rd_en = '1' else (others => '0');
     -- Only generate when reading
     generate_random <= s_generate_random when rd_en = '1' and addr = "10" else '0';
 
